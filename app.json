@@ -2,9 +2,12 @@
   "pages": [
     "pages/index/index"
   ],
+  "usingComponents": {
+    "van-icon": "@vant/weapp/icon/index"
+  },
   "window": {
     "navigationBarTitleText": "房贷计算器",
-    "navigationBarBackgroundColor": "#1890ff",
+    "navigationBarBackgroundColor": "#1677ff",
     "navigationBarTextStyle": "white"
   },
   "sitemapLocation": "sitemap.json"

@@ -42,6 +42,12 @@ page {
   font-weight: 600;
   color: #333;
   margin-bottom: 16rpx;
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+.label-text {
+  line-height: 1;
 }
 
 .input-row {
@@ -117,8 +123,14 @@ page {
   border: none;
   margin-top: 12rpx;
   box-shadow: 0 8rpx 24rpx rgba(22,119,255,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
 }
-.calc-btn:active { opacity: 0.88; }
+.btn-text {
+  line-height: 1;
+}
 
 /* ===== Result Card ===== */
 .result-card {
@@ -217,12 +229,14 @@ page {
   background: #f6ffed;
   border-radius: 12rpx;
   border: 2rpx solid #b7eb8f;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+}
+.savings-text {
   font-size: 26rpx;
   color: #389e0d;
-}
-.savings-icon {
-  margin-right: 8rpx;
 }
 .savings-num {
   font-weight: 700;
@@ -233,10 +247,15 @@ page {
 /* Detail Toggle */
 .detail-toggle {
   margin-top: 28rpx;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  padding: 16rpx 0;
+}
+.toggle-text {
   font-size: 26rpx;
   color: #1677ff;
-  padding: 16rpx 0;
 }
 
 /* Detail Table */
