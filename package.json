@@ -1,0 +1,15 @@
+{
+  "name": "mortgage-calculator",
+  "version": "1.0.0",
+  "description": "微信小程序 - 房贷计算器（等额本息 vs 等额本金）",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yutd0486/mortgage-calculator.git"
+  },
+  "keywords": ["miniprogram", "mortgage", "calculator"],
+  "author": "Yutd0486",
+  "license": "MIT",
+  "dependencies": {
+    "@vant/weapp": "^1.11.5"
+  }
+}
