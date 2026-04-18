@@ -1,9 +1,30 @@
 {
   "pages": [
-    "pages/index/index"
+    "pages/index/index",
+    "pages/plan/index"
   ],
   "usingComponents": {
     "van-icon": "@vant/weapp/icon/index"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#1677ff",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "计算器",
+        "iconPath": "assets/icons/calc_gray.png",
+        "selectedIconPath": "assets/icons/calc_blue.png"
+      },
+      {
+        "pagePath": "pages/plan/index",
+        "text": "还款计划",
+        "iconPath": "assets/icons/plan_gray.png",
+        "selectedIconPath": "assets/icons/plan_blue.png"
+      }
+    ]
   },
   "window": {
     "navigationBarTitleText": "房贷计算器",

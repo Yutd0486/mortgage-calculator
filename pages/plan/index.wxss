@@ -1,0 +1,153 @@
+page {
+  background: #f0f4f8;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* 摘要卡片 */
+.summary-card {
+  background: linear-gradient(135deg, #1677ff 0%, #0958d9 100%);
+  padding: 30rpx 40rpx;
+}
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+}
+.summary-item {
+  text-align: center;
+}
+.summary-label {
+  font-size: 24rpx;
+  color: rgba(255,255,255,0.75);
+  margin-bottom: 8rpx;
+}
+.summary-val {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Tab 切换 */
+.tab-bar {
+  display: flex;
+  background: #fff;
+  border-bottom: 1rpx solid #eee;
+}
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  font-size: 28rpx;
+  color: #999;
+  position: relative;
+}
+.tab-item.active {
+  color: #1677ff;
+  font-weight: 600;
+}
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 25%;
+  width: 50%;
+  height: 4rpx;
+  background: #1677ff;
+  border-radius: 2rpx;
+}
+
+/* 汇总行 */
+.total-row {
+  display: flex;
+  background: #fff;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.total-item {
+  flex: 1;
+  text-align: center;
+}
+.total-label {
+  font-size: 22rpx;
+  color: #999;
+  margin-bottom: 8rpx;
+}
+.total-val {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #333;
+}
+.total-val.blue { color: #1677ff; }
+.total-val.red  { color: #f5222d; }
+
+/* 表头 */
+.table-header {
+  display: flex;
+  background: #f5f7fa;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #e8e8e8;
+}
+
+/* 表格行 */
+.table-scroll {
+  flex: 1;
+}
+.table-row {
+  display: flex;
+  padding: 18rpx 0;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+.row-even {
+  background: #fafafa;
+}
+
+.col-idx {
+  width: 80rpx;
+  text-align: center;
+  font-size: 22rpx;
+  color: #999;
+}
+.col-val {
+  flex: 1;
+  text-align: center;
+  font-size: 22rpx;
+  color: #333;
+}
+.table-header .col-idx,
+.table-header .col-val {
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #666;
+}
+.red-light { color: #ff7875; }
+.gray { color: #aaa; }
+
+/* 空状态 */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 70vh;
+  gap: 20rpx;
+}
+.empty-text {
+  font-size: 28rpx;
+  color: #999;
+}
+.go-btn {
+  margin-top: 20rpx;
+  width: 240rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  background: #1677ff;
+  color: #fff;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  border: none;
+}

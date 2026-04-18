@@ -1,0 +1,74 @@
+<view class="container" wx:if="{{hasData}}">
+  <!-- 贷款信息摘要 -->
+  <view class="summary-card">
+    <view class="summary-row">
+      <view class="summary-item">
+        <view class="summary-label">贷款金额</view>
+        <view class="summary-val">{{info.loanAmount}} 万元</view>
+      </view>
+      <view class="summary-item">
+        <view class="summary-label">贷款年限</view>
+        <view class="summary-val">{{info.years}} 年</view>
+      </view>
+      <view class="summary-item">
+        <view class="summary-label">年利率</view>
+        <view class="summary-val">{{info.rate}}%</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 切换 Tab -->
+  <view class="tab-bar">
+    <view class="tab-item {{activeTab=='ei'?'active':''}}" bindtap="switchTab" data-tab="ei">
+      等额本息
+    </view>
+    <view class="tab-item {{activeTab=='ep'?'active':''}}" bindtap="switchTab" data-tab="ep">
+      等额本金
+    </view>
+  </view>
+
+  <!-- 汇总信息 -->
+  <view class="total-row">
+    <view class="total-item">
+      <view class="total-label">月供</view>
+      <view class="total-val blue">{{activeTab=='ei' ? summary.eiMonthly : summary.epFirst}} 元{{activeTab=='ep' ? '起' : ''}}</view>
+    </view>
+    <view class="total-item">
+      <view class="total-label">总利息</view>
+      <view class="total-val red">{{activeTab=='ei' ? summary.eiInterest : summary.epInterest}} 元</view>
+    </view>
+    <view class="total-item">
+      <view class="total-label">还款总额</view>
+      <view class="total-val">{{activeTab=='ei' ? summary.eiTotal : summary.epTotal}} 元</view>
+    </view>
+  </view>
+
+  <!-- 明细表头 -->
+  <view class="table-header">
+    <text class="col-idx">期数</text>
+    <text class="col-val">月供(元)</text>
+    <text class="col-val">本金(元)</text>
+    <text class="col-val">利息(元)</text>
+    <text class="col-val">剩余本金(元)</text>
+  </view>
+
+  <!-- 明细列表 -->
+  <scroll-view scroll-y class="table-scroll">
+    <view class="table-row {{index%2==0?'row-even':''}}"
+          wx:for="{{activeTab=='ei' ? eiSchedule : epSchedule}}"
+          wx:key="month">
+      <text class="col-idx">{{item.month}}</text>
+      <text class="col-val">{{item.payment}}</text>
+      <text class="col-val">{{item.principal}}</text>
+      <text class="col-val red-light">{{item.interest}}</text>
+      <text class="col-val gray">{{item.remaining}}</text>
+    </view>
+  </scroll-view>
+</view>
+
+<!-- 无数据提示 -->
+<view class="empty" wx:else>
+  <van-icon name="description" size="80rpx" color="#ccc" />
+  <view class="empty-text">请先在计算器页面完成计算</view>
+  <button class="go-btn" bindtap="goCalc">去计算</button>
+</view>
