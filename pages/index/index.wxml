@@ -1,0 +1,129 @@
+<view class="container">
+  <!-- 顶部 Banner -->
+  <view class="header">
+    <view class="header-title">🏠 房贷计算器</view>
+    <view class="header-sub">等额本息 vs 等额本金</view>
+  </view>
+
+  <!-- 输入表单 -->
+  <view class="form-card">
+    <!-- 贷款总额 -->
+    <view class="form-item">
+      <view class="form-label">贷款总额</view>
+      <view class="input-row">
+        <input class="form-input" type="digit" placeholder="请输入金额" bindinput="onLoanAmountInput" value="{{loanAmount}}" />
+        <view class="input-unit">万元</view>
+      </view>
+      <view class="quick-btns">
+        <view class="quick-btn {{loanAmount=='50'?'active':''}}" bindtap="setLoan" data-val="50">50万</view>
+        <view class="quick-btn {{loanAmount=='100'?'active':''}}" bindtap="setLoan" data-val="100">100万</view>
+        <view class="quick-btn {{loanAmount=='150'?'active':''}}" bindtap="setLoan" data-val="150">150万</view>
+        <view class="quick-btn {{loanAmount=='200'?'active':''}}" bindtap="setLoan" data-val="200">200万</view>
+      </view>
+    </view>
+
+    <!-- 贷款年限 -->
+    <view class="form-item">
+      <view class="form-label">贷款年限</view>
+      <picker mode="selector" range="{{years}}" value="{{selectedYearIndex}}" bindchange="onYearsChange">
+        <view class="picker-row">
+          <text class="picker-val">{{years[selectedYearIndex]}} 年</text>
+          <text class="picker-arrow">▾</text>
+        </view>
+      </picker>
+      <view class="quick-btns">
+        <view class="quick-btn {{years[selectedYearIndex]==10?'active':''}}" bindtap="setYear" data-val="10">10年</view>
+        <view class="quick-btn {{years[selectedYearIndex]==20?'active':''}}" bindtap="setYear" data-val="20">20年</view>
+        <view class="quick-btn {{years[selectedYearIndex]==25?'active':''}}" bindtap="setYear" data-val="25">25年</view>
+        <view class="quick-btn {{years[selectedYearIndex]==30?'active':''}}" bindtap="setYear" data-val="30">30年</view>
+      </view>
+    </view>
+
+    <!-- 年利率 -->
+    <view class="form-item">
+      <view class="form-label">年利率</view>
+      <view class="input-row">
+        <input class="form-input" type="digit" placeholder="请输入利率" bindinput="onRateInput" value="{{rate}}" />
+        <view class="input-unit">%</view>
+      </view>
+      <view class="quick-btns">
+        <view class="quick-btn {{rate=='3.1'?'active':''}}" bindtap="setRate" data-val="3.1">3.1%</view>
+        <view class="quick-btn {{rate=='3.5'?'active':''}}" bindtap="setRate" data-val="3.5">3.5%</view>
+        <view class="quick-btn {{rate=='3.95'?'active':''}}" bindtap="setRate" data-val="3.95">3.95%</view>
+        <view class="quick-btn {{rate=='4.2'?'active':''}}" bindtap="setRate" data-val="4.2">4.2%</view>
+      </view>
+    </view>
+
+    <button class="calc-btn" bindtap="calculate">立即计算</button>
+  </view>
+
+  <!-- 结果区域 -->
+  <view class="result-card" wx:if="{{showResult}}">
+    <!-- 并排对比 -->
+    <view class="compare-container">
+      <!-- 等额本息 -->
+      <view class="result-box box-blue">
+        <view class="box-tag">等额本息</view>
+        <view class="box-desc">每月固定还款</view>
+        <view class="big-num">{{equalPrincipalInterest.monthlyPayment}}</view>
+        <view class="big-unit">元/月</view>
+        <view class="divider"></view>
+        <view class="detail-row">
+          <text class="detail-label">总利息</text>
+          <text class="detail-val red">{{equalPrincipalInterest.totalInterest}}</text>
+        </view>
+        <view class="detail-row">
+          <text class="detail-label">还款总额</text>
+          <text class="detail-val">{{equalPrincipalInterest.totalAmount}}</text>
+        </view>
+      </view>
+
+      <!-- 等额本金 -->
+      <view class="result-box box-orange">
+        <view class="box-tag">等额本金</view>
+        <view class="box-desc">月供逐月递减</view>
+        <view class="big-num sm">{{equalPrincipal.firstMonthPayment}}</view>
+        <view class="big-unit">首月/元</view>
+        <view class="range-tip">末月 {{equalPrincipal.lastMonthPayment}} 元</view>
+        <view class="divider"></view>
+        <view class="detail-row">
+          <text class="detail-label">总利息</text>
+          <text class="detail-val red">{{equalPrincipal.totalInterest}}</text>
+        </view>
+        <view class="detail-row">
+          <text class="detail-label">还款总额</text>
+          <text class="detail-val">{{equalPrincipal.totalAmount}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 节省提示 -->
+    <view class="savings-banner" wx:if="{{savings}}">
+      <text class="savings-icon">💡</text>
+      <text>选等额本金可节省利息 </text>
+      <text class="savings-num">{{savings}}</text>
+      <text> 元</text>
+    </view>
+
+    <!-- 还款明细入口 -->
+    <view class="detail-toggle" bindtap="toggleDetail">
+      <text>{{showDetail ? '收起还款明细 ▲' : '查看还款明细 ▼'}}</text>
+    </view>
+
+    <!-- 还款明细表 -->
+    <view class="detail-table" wx:if="{{showDetail}}">
+      <view class="table-header">
+        <text class="col-month">期数</text>
+        <text class="col-val">等额本息(元)</text>
+        <text class="col-val">等额本金(元)</text>
+      </view>
+      <scroll-view scroll-y style="max-height: 600rpx;">
+        <view class="table-row {{index%2==0?'row-even':''}}" wx:for="{{schedule}}" wx:key="month">
+          <text class="col-month">第{{item.month}}期</text>
+          <text class="col-val">{{item.ei}}</text>
+          <text class="col-val">{{item.ep}}</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</view>

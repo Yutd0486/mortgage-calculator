@@ -1,0 +1,279 @@
+page {
+  background: #f0f4f8;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+}
+
+.container {
+  padding: 0 0 60rpx;
+}
+
+/* ===== Header ===== */
+.header {
+  background: linear-gradient(135deg, #1677ff 0%, #0958d9 100%);
+  padding: 60rpx 40rpx 80rpx;
+  text-align: center;
+}
+.header-title {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 12rpx;
+}
+.header-sub {
+  font-size: 26rpx;
+  color: rgba(255,255,255,0.75);
+}
+
+/* ===== Form Card ===== */
+.form-card {
+  margin: -40rpx 30rpx 24rpx;
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 40rpx 30rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0,0,0,0.10);
+}
+
+.form-item {
+  margin-bottom: 36rpx;
+}
+
+.form-label {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+  background: #f5f7fa;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  height: 88rpx;
+}
+.form-input {
+  flex: 1;
+  font-size: 32rpx;
+  color: #222;
+  background: transparent;
+}
+.input-unit {
+  font-size: 26rpx;
+  color: #999;
+  margin-left: 12rpx;
+}
+
+/* Picker */
+.picker-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f5f7fa;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  height: 88rpx;
+}
+.picker-val {
+  font-size: 32rpx;
+  color: #222;
+}
+.picker-arrow {
+  font-size: 28rpx;
+  color: #999;
+}
+
+/* Quick Buttons */
+.quick-btns {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 16rpx;
+}
+.quick-btn {
+  flex: 1;
+  height: 60rpx;
+  line-height: 60rpx;
+  text-align: center;
+  font-size: 24rpx;
+  color: #1677ff;
+  background: #e6f0ff;
+  border-radius: 30rpx;
+  transition: all 0.2s;
+}
+.quick-btn.active {
+  background: #1677ff;
+  color: #fff;
+}
+
+/* Calc Button */
+.calc-btn {
+  width: 100%;
+  height: 96rpx;
+  background: linear-gradient(135deg, #1677ff 0%, #0958d9 100%);
+  border-radius: 48rpx;
+  color: #fff;
+  font-size: 34rpx;
+  font-weight: 600;
+  border: none;
+  margin-top: 12rpx;
+  box-shadow: 0 8rpx 24rpx rgba(22,119,255,0.35);
+}
+.calc-btn:active { opacity: 0.88; }
+
+/* ===== Result Card ===== */
+.result-card {
+  margin: 0 30rpx;
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 36rpx 24rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0,0,0,0.08);
+}
+
+/* Compare */
+.compare-container {
+  display: flex;
+  gap: 20rpx;
+}
+
+.result-box {
+  flex: 1;
+  border-radius: 16rpx;
+  padding: 28rpx 20rpx;
+  text-align: center;
+}
+.box-blue {
+  background: linear-gradient(160deg, #e8f3ff 0%, #f0f7ff 100%);
+  border: 2rpx solid #91caff;
+}
+.box-orange {
+  background: linear-gradient(160deg, #fff7e6 0%, #fffbe6 100%);
+  border: 2rpx solid #ffd591;
+}
+
+.box-tag {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 6rpx;
+}
+.box-desc {
+  font-size: 22rpx;
+  color: #aaa;
+  margin-bottom: 20rpx;
+}
+
+.big-num {
+  font-size: 44rpx;
+  font-weight: 800;
+  color: #1677ff;
+  line-height: 1.1;
+}
+.box-orange .big-num {
+  color: #fa8c16;
+}
+.big-num.sm {
+  font-size: 36rpx;
+}
+.big-unit {
+  font-size: 22rpx;
+  color: #999;
+  margin: 6rpx 0 4rpx;
+}
+.range-tip {
+  font-size: 22rpx;
+  color: #fa8c16;
+  margin-bottom: 4rpx;
+}
+
+.divider {
+  height: 1rpx;
+  background: rgba(0,0,0,0.08);
+  margin: 20rpx 0;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+.detail-label {
+  font-size: 22rpx;
+  color: #999;
+}
+.detail-val {
+  font-size: 24rpx;
+  color: #333;
+  font-weight: 600;
+}
+.detail-val.red {
+  color: #f5222d;
+}
+
+/* Savings Banner */
+.savings-banner {
+  margin-top: 28rpx;
+  padding: 24rpx;
+  background: #f6ffed;
+  border-radius: 12rpx;
+  border: 2rpx solid #b7eb8f;
+  text-align: center;
+  font-size: 26rpx;
+  color: #389e0d;
+}
+.savings-icon {
+  margin-right: 8rpx;
+}
+.savings-num {
+  font-weight: 700;
+  font-size: 30rpx;
+  color: #237804;
+}
+
+/* Detail Toggle */
+.detail-toggle {
+  margin-top: 28rpx;
+  text-align: center;
+  font-size: 26rpx;
+  color: #1677ff;
+  padding: 16rpx 0;
+}
+
+/* Detail Table */
+.detail-table {
+  margin-top: 16rpx;
+  border-radius: 12rpx;
+  overflow: hidden;
+  border: 1rpx solid #e8e8e8;
+}
+.table-header {
+  display: flex;
+  background: #f0f4f8;
+  padding: 18rpx 0;
+}
+.table-row {
+  display: flex;
+  padding: 16rpx 0;
+  border-top: 1rpx solid #f0f0f0;
+}
+.row-even {
+  background: #fafafa;
+}
+.col-month {
+  width: 140rpx;
+  text-align: center;
+  font-size: 24rpx;
+  color: #666;
+}
+.col-val {
+  flex: 1;
+  text-align: center;
+  font-size: 24rpx;
+  color: #333;
+}
+.table-header .col-month,
+.table-header .col-val {
+  font-weight: 600;
+  color: #555;
+  font-size: 24rpx;
+}
