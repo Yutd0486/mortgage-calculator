@@ -3,9 +3,6 @@
     "pages/index/index",
     "pages/plan/index"
   ],
-  "usingComponents": {
-    "van-icon": "@vant/weapp/icon/index"
-  },
   "tabBar": {
     "color": "#999999",
     "selectedColor": "#1677ff",

@@ -296,3 +296,19 @@ page {
   color: #555;
   font-size: 24rpx;
 }
+/* ===== Emoji Icon Replacements ===== */
+.header-icon {
+  font-size: 40rpx;
+  margin-bottom: 12rpx;
+  display: block;
+}
+.label-icon {
+  font-size: 28rpx;
+  line-height: 1;
+}
+.empty-icon {
+  font-size: 80rpx;
+  display: block;
+  text-align: center;
+  margin-bottom: 20rpx;
+}

@@ -68,7 +68,7 @@
 
 <!-- 无数据提示 -->
 <view class="empty" wx:else>
-  <van-icon name="description" size="80rpx" color="#ccc" />
+  <text class="empty-icon">📋</text>
   <view class="empty-text">请先在计算器页面完成计算</view>
   <button class="go-btn" bindtap="goCalc">去计算</button>
 </view>

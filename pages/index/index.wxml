@@ -1,7 +1,7 @@
 <view class="container">
   <!-- 顶部 Banner -->
   <view class="header">
-    <van-icon name="home-o" size="40rpx" color="#fff" class="header-icon" />
+    <text class="header-icon">🏠</text>
     <view class="header-title">房贷计算器</view>
     <view class="header-sub">等额本息 vs 等额本金</view>
   </view>
@@ -11,7 +11,7 @@
     <!-- 贷款总额 -->
     <view class="form-item">
       <view class="form-label">
-        <van-icon name="balance-o" size="28rpx" color="#1677ff" />
+        <text class="label-icon">💰</text>
         <text class="label-text">贷款总额</text>
       </view>
       <view class="input-row">
@@ -29,13 +29,13 @@
     <!-- 贷款年限 -->
     <view class="form-item">
       <view class="form-label">
-        <van-icon name="clock-o" size="28rpx" color="#1677ff" />
+        <text class="label-icon">🗓</text>
         <text class="label-text">贷款年限</text>
       </view>
       <picker mode="selector" range="{{years}}" value="{{selectedYearIndex}}" bindchange="onYearsChange">
         <view class="picker-row">
           <text class="picker-val">{{years[selectedYearIndex]}} 年</text>
-          <van-icon name="arrow-down" size="24rpx" color="#999" />
+          <text class="picker-arrow">▾</text>
         </view>
       </picker>
       <view class="quick-btns">
@@ -49,7 +49,7 @@
     <!-- 年利率 -->
     <view class="form-item">
       <view class="form-label">
-        <van-icon name="chart-trending-o" size="28rpx" color="#1677ff" />
+        <text class="label-icon">📈</text>
         <text class="label-text">年利率</text>
       </view>
       <view class="input-row">
@@ -65,14 +65,12 @@
     </view>
 
     <button class="calc-btn" bindtap="calculate">
-      <van-icon name="calculator-o" size="32rpx" color="#fff" />
-      <text class="btn-text">立即计算</text>
+      <text class="btn-text">🧮 立即计算</text>
     </button>
   </view>
 
   <!-- 结果区域 -->
   <view class="result-card" wx:if="{{showResult}}">
-    <!-- 并排对比 -->
     <view class="compare-container">
       <!-- 等额本息 -->
       <view class="result-box box-blue">
@@ -112,16 +110,14 @@
 
     <!-- 节省提示 -->
     <view class="savings-banner" wx:if="{{savings}}">
-      <van-icon name="info-o" size="28rpx" color="#389e0d" />
-      <text class="savings-text">选等额本金可节省利息 </text>
+      <text class="savings-text">💡 选等额本金可节省利息 </text>
       <text class="savings-num">{{savings}}</text>
       <text class="savings-text"> 元</text>
     </view>
 
     <!-- 还款明细入口 -->
     <view class="detail-toggle" bindtap="toggleDetail">
-      <van-icon name="{{showDetail ? 'arrow-up' : 'arrow-down'}}" size="24rpx" color="#1677ff" />
-      <text class="toggle-text">{{showDetail ? '收起还款明细' : '查看还款明细'}}</text>
+      <text class="toggle-text">{{showDetail ? '▲ 收起还款明细' : '▼ 查看还款明细'}}</text>
     </view>
 
     <!-- 还款明细表 -->
