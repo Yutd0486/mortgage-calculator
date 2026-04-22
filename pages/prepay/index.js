@@ -141,10 +141,12 @@ Page({
         });
       }
 
+      const monthlySaved = originalMonthly - newMonthly;
       result = {
         strategy: 'reducePayment',
         savedInterest: this.fmt(savedInterest),
         newMonthly: this.fmt(newMonthly),
+        monthlySaved: this.fmt(monthlySaved > 0 ? monthlySaved : 0),
         irr: irr.toFixed(2) + '%',
         originalMonthly: this.fmt(originalMonthly),
         newTotalInterest: this.fmt(newInterest)

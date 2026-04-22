@@ -101,7 +101,7 @@
         </view>
         <view class="detail-item">
           <text class="detail-label">月供减少</text>
-          <text class="detail-val green">-{{(parseFloat(result.originalMonthly.replace(/,/g,'')) - (parseFloat(result.newMonthly.replace(/,/g,''))) > 0 ? ((parseFloat(result.originalMonthly.replace(/,/g,'')) - (parseFloat(result.newMonthly.replace(/,/g,'')))).toLocaleString() : 0)}} 元</text>
+          <text class="detail-val green">-{{result.monthlySaved}} 元</text>
         </view>
       </block>
       <block wx:if="{{result.strategy === 'reduceTerm'}}">
