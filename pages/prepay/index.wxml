@@ -1,0 +1,142 @@
+<view class="container">
+  <!-- Header -->
+  <view class="header">
+    <text class="header-icon">💳</text>
+    <view class="header-title">提前还款计算</view>
+    <view class="header-sub">智能规划节省利息</view>
+  </view>
+
+  <!-- Info Card -->
+  <view class="info-card" wx:if="{{calcResult}}">
+    <view class="info-row">
+      <text class="info-label">原贷款总额</text>
+      <text class="info-val">{{calcResult.info.loanAmount}} 万元</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">原贷款年限</text>
+      <text class="info-val">{{calcResult.info.years}} 年</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">原年利率</text>
+      <text class="info-val">{{calcResult.info.rate}}%</text>
+    </view>
+  </view>
+
+  <!-- Input Form -->
+  <view class="form-card">
+    <view class="form-item">
+      <view class="form-label">
+        <text class="label-icon">📅</text>
+        <text class="label-text">提前还款发生在第</text>
+      </view>
+      <view class="input-row">
+        <input class="form-input" type="number" placeholder="请输入期数" bindinput="onPrepayMonthInput" value="{{prepayMonth}}" />
+        <view class="input-unit">期后</view>
+      </view>
+      <view class="form-hint">例如：第12期表示贷款后第12个月</view>
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">
+        <text class="label-icon">💵</text>
+        <text class="label-text">提前还款金额</text>
+      </view>
+      <view class="input-row">
+        <input class="form-input" type="digit" placeholder="请输入金额" bindinput="onPrepayAmountInput" value="{{prepayAmount}}" />
+        <view class="input-unit">万元</view>
+      </view>
+      <view class="quick-btns">
+        <view class="quick-btn {{prepayAmount=='5'?'active':''}}" data-val="5" bindtap="setAmount">5万</view>
+        <view class="quick-btn {{prepayAmount=='10'?'active':''}}" data-val="10" bindtap="setAmount">10万</view>
+        <view class="quick-btn {{prepayAmount=='20'?'active':''}}" data-val="20" bindtap="setAmount">20万</view>
+        <view class="quick-btn {{prepayAmount=='30'?'active':''}}" data-val="30" bindtap="setAmount">30万</view>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">
+        <text class="label-icon">🎯</text>
+        <text class="label-text">还款策略</text>
+      </view>
+      <view class="strategy-options">
+        <view class="strategy-option {{strategy === 'reducePayment' ? 'active' : ''}}" bindtap="onStrategyChange" data-strategy="reducePayment">
+          <view class="strategy-radio {{strategy === 'reducePayment' ? 'checked' : ''}}"></view>
+          <view class="strategy-content">
+            <text class="strategy-title">缩短月供</text>
+            <text class="strategy-desc">年限不变，月供更低</text>
+          </view>
+        </view>
+        <view class="strategy-option {{strategy === 'reduceTerm' ? 'active' : ''}}" bindtap="onStrategyChange" data-strategy="reduceTerm">
+          <view class="strategy-radio {{strategy === 'reduceTerm' ? 'checked' : ''}}"></view>
+          <view class="strategy-content">
+            <text class="strategy-title">缩短年限</text>
+            <text class="strategy-desc">月供不变，更快还清</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <button class="calc-btn" bindtap="calculate">
+      <text class="btn-text">🧮 计算节省利息</text>
+    </button>
+  </view>
+
+  <!-- Result -->
+  <view class="result-card" wx:if="{{result}}">
+    <view class="result-summary">
+      <view class="saved-label">节省利息</view>
+      <view class="saved-num">{{result.savedInterest}}</view>
+      <view class="saved-unit">元</view>
+    </view>
+
+    <view class="result-details">
+      <block wx:if="{{result.strategy === 'reducePayment'}}">
+        <view class="detail-item">
+          <text class="detail-label">新月供</text>
+          <text class="detail-val">{{result.newMonthly}} 元/月</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">原月供</text>
+          <text class="detail-val gray">{{result.originalMonthly}} 元/月</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">月供减少</text>
+          <text class="detail-val green">-{{(parseFloat(result.originalMonthly.replace(/,/g,'')) - (parseFloat(result.newMonthly.replace(/,/g,''))) > 0 ? ((parseFloat(result.originalMonthly.replace(/,/g,'')) - (parseFloat(result.newMonthly.replace(/,/g,'')))).toLocaleString() : 0)}} 元</text>
+        </view>
+      </block>
+      <block wx:if="{{result.strategy === 'reduceTerm'}}">
+        <view class="detail-item">
+          <text class="detail-label">新还款期数</text>
+          <text class="detail-val">{{result.newTerms}} 期</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">原还款期数</text>
+          <text class="detail-val gray">{{result.originalTerms}} 期</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">缩短期数</text>
+          <text class="detail-val green">{{result.originalTerms - result.newTerms}} 期</text>
+        </view>
+      </block>
+      <view class="detail-item">
+        <text class="detail-label">等效年化收益率(IRR)</text>
+        <text class="detail-val orange">{{result.irr}}</text>
+      </view>
+    </view>
+
+    <!-- Compare Table -->
+    <view class="compare-table">
+      <view class="compare-title">还款前后对比（前{{compareSchedule.length}}期）</view>
+      <view class="table-header">
+        <text class="col-month">期数</text>
+        <text class="col-val">原月供(元)</text>
+        <text class="col-val">新月供(元)</text>
+      </view>
+      <view class="table-row {{index%2==0?'row-even':''}}" wx:for="{{compareSchedule}}" wx:key="month">
+        <text class="col-month">第{{item.month}}期</text>
+        <text class="col-val">{{item.original}}</text>
+        <text class="col-val highlight">{{item.new}}</text>
+      </view>
+    </view>
+  </view>
+</view>

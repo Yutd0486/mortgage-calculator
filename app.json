@@ -1,7 +1,8 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/plan/index"
+    "pages/plan/index",
+    "pages/prepay/index"
   ],
   "tabBar": {
     "color": "#999999",
