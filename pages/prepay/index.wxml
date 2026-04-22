@@ -115,7 +115,7 @@
         </view>
         <view class="detail-item">
           <text class="detail-label">缩短期数</text>
-          <text class="detail-val green">{{result.originalTerms - result.newTerms}} 期</text>
+          <text class="detail-val green">{{result.savedTerms}} 期</text>
         </view>
       </block>
       <view class="detail-item">

@@ -12,30 +12,18 @@ Page({
   },
 
   onShow() {
-    // 每次显示页面时从 globalData 读取计算结果
     const calcResult = app.globalData.calcResult;
     if (!calcResult || !calcResult.eiSchedule || calcResult.eiSchedule.length === 0) {
-      wx.showToast({ title: '请先计算贷款', icon: 'none' });
+      wx.showToast({ title: '请先在计算器页完成计算', icon: 'none' });
       return;
     }
     this.setData({ calcResult });
   },
 
-  onPrepayMonthInput(e) {
-    this.setData({ prepayMonth: e.detail.value, result: null });
-  },
-
-  setAmount(e) {
-    this.setData({ prepayAmount: e.currentTarget.dataset.val, result: null });
-  },
-
-  onPrepayAmountInput(e) {
-    this.setData({ prepayAmount: e.detail.value, result: null });
-  },
-
-  onStrategyChange(e) {
-    this.setData({ strategy: e.currentTarget.dataset.strategy, result: null });
-  },
+  onPrepayMonthInput(e) { this.setData({ prepayMonth: e.detail.value, result: null }); },
+  onPrepayAmountInput(e) { this.setData({ prepayAmount: e.detail.value, result: null }); },
+  setAmount(e) { this.setData({ prepayAmount: e.currentTarget.dataset.val, result: null }); },
+  onStrategyChange(e) { this.setData({ strategy: e.currentTarget.dataset.strategy, result: null }); },
 
   fmt(num) {
     return num.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -44,8 +32,7 @@ Page({
   calculate() {
     const calcResult = app.globalData.calcResult;
     if (!calcResult || !calcResult.eiSchedule) {
-      wx.showToast({ title: '请先计算贷款', icon: 'none' });
-      return;
+      wx.showToast({ title: '请先在计算器页完成计算', icon: 'none' }); return;
     }
 
     const { prepayMonth, prepayAmount, strategy } = this.data;
@@ -53,148 +40,118 @@ Page({
     const prepayAmountNum = parseFloat(prepayAmount);
 
     if (!prepayMonthNum || prepayMonthNum <= 0) {
-      wx.showToast({ title: '请输入有效的期数', icon: 'none' });
-      return;
+      wx.showToast({ title: '请输入有效的期数', icon: 'none' }); return;
     }
     if (!prepayAmountNum || prepayAmountNum <= 0) {
-      wx.showToast({ title: '请输入有效的金额', icon: 'none' });
-      return;
+      wx.showToast({ title: '请输入有效的金额', icon: 'none' }); return;
     }
 
     const info = calcResult.info;
     const P = info.loanAmount * 10000;
-    const years = info.years;
-    const rate = info.rate;
-    const totalMonths = years * 12;
-    const r = rate / 100 / 12;
+    const totalMonths = info.years * 12;
+    const r = info.rate / 100 / 12;
 
-    // 原始月供（等额本息）
-    const pow = Math.pow(1 + r, totalMonths);
-    const originalMonthly = (P * r * pow) / (pow - 1);
-    const originalTotal = originalMonthly * totalMonths;
-    const originalInterest = originalTotal - P;
-
-    // 提前还款后的剩余本金
     const schedule = calcResult.eiSchedule;
-    const remainingSchedule = schedule.slice(prepayMonthNum);
-    let remainingPrincipal = 0;
-    if (remainingSchedule.length > 0) {
-      // 通过最后一条记录的 remaining 计算剩余本金
-      const lastItem = remainingSchedule[remainingSchedule.length - 1];
-      remainingPrincipal = parseFloat(lastItem.remaining.replace(/,/g, ''));
-    }
-    if (remainingPrincipal <= 0) {
-      wx.showToast({ title: '提前还款期数超出范围', icon: 'none' });
-      return;
+
+    if (prepayMonthNum >= totalMonths) {
+      wx.showToast({ title: '期数超出还款总期数', icon: 'none' }); return;
     }
 
-    // 实际提前还款金额（不能超过剩余本金）
-    const actualPrepayAmount = Math.min(prepayAmountNum * 10000, remainingPrincipal);
-    const newRemainingPrincipal = remainingPrincipal - actualPrepayAmount;
+    // 原始月供
+    const pow0 = Math.pow(1 + r, totalMonths);
+    const originalMonthly = (P * r * pow0) / (pow0 - 1);
+    const originalInterest = originalMonthly * totalMonths - P;
 
-    // 已还期数
-    const paidMonths = prepayMonthNum;
-    const paidInterest = schedule.slice(0, prepayMonthNum).reduce((sum, item) => {
-      return sum + parseFloat(item.interest.replace(/,/g, ''));
-    }, 0);
-    const paidPrincipal = schedule.slice(0, prepayMonthNum).reduce((sum, item) => {
-      return sum + parseFloat(item.principal.replace(/,/g, ''));
+    // 第 N 期末的剩余本金（直接从 schedule 取）
+    const nthItem = schedule[prepayMonthNum - 1];
+    const remainingAfterN = parseFloat(nthItem.remaining.replace(/,/g, ''));
+
+    const prepayWan = prepayAmountNum * 10000;
+    if (prepayWan >= remainingAfterN) {
+      wx.showToast({ title: '提前还款金额不能超过剩余本金 ' + this.fmt(remainingAfterN / 10000) + ' 万', icon: 'none' }); return;
+    }
+
+    const newPrincipal = remainingAfterN - prepayWan;
+    const remainingTerms = totalMonths - prepayMonthNum;
+
+    // 已付利息
+    const paidInterest = schedule.slice(0, prepayMonthNum).reduce((s, item) => {
+      return s + parseFloat(item.interest.replace(/,/g, ''));
     }, 0);
 
     let result = {};
     let newSchedule = [];
 
     if (strategy === 'reducePayment') {
-      // 缩短月供：年限不变，重新计算更低的月供
-      const remainingTerms = totalMonths - paidMonths;
-      if (newRemainingPrincipal <= 0 || remainingTerms <= 0) {
-        wx.showToast({ title: '提前还款金额过多', icon: 'none' });
-        return;
-      }
-
-      const newPow = Math.pow(1 + r, remainingTerms);
-      const newMonthly = (newRemainingPrincipal * r * newPow) / (newPow - 1);
-      const newTotal = newMonthly * remainingTerms;
-      const newInterest = newTotal - newRemainingPrincipal;
-
-      // 节省利息 = 原始总利息 - 已付利息 - 新利息
+      // 年限不变，月供降低
+      const pow1 = Math.pow(1 + r, remainingTerms);
+      const newMonthly = (newPrincipal * r * pow1) / (pow1 - 1);
+      const newInterest = newMonthly * remainingTerms - newPrincipal;
       const savedInterest = originalInterest - paidInterest - newInterest;
+      const irr = savedInterest > 0 ? (savedInterest / prepayWan / (remainingTerms / 12)) * 100 : 0;
+      const monthlySaved = originalMonthly - newMonthly;
 
-      // IRR 近似：节省利息 / 提前还款金额 / 剩余年限
-      const remainingYears = remainingTerms / 12;
-      const irr = savedInterest > 0 && actualPrepayAmount > 0 ? (savedInterest / actualPrepayAmount / remainingYears) * 100 : 0;
-
-      // 生成新的还款 schedule（新月供）
-      newSchedule = [];
-      let newRemaining = newRemainingPrincipal;
-      for (let i = 1; i <= remainingTerms; i++) {
-        const interestPart = newRemaining * r;
-        const principalPart = newMonthly - interestPart;
-        newRemaining -= principalPart;
-        if (newRemaining < 0) newRemaining = 0;
-        newSchedule.push({
-          month: paidMonths + i,
-          payment: newMonthly,
-          principal: principalPart,
-          interest: interestPart,
-          remaining: newRemaining
-        });
+      // 生成新 schedule 供对比表用
+      let rem = newPrincipal;
+      for (let i = 0; i < remainingTerms; i++) {
+        const ip = rem * r;
+        const pp = newMonthly - ip;
+        rem = Math.max(0, rem - pp);
+        newSchedule.push({ month: prepayMonthNum + i + 1, payment: newMonthly });
       }
 
-      const monthlySaved = originalMonthly - newMonthly;
       result = {
         strategy: 'reducePayment',
-        savedInterest: this.fmt(savedInterest),
+        savedInterest: this.fmt(Math.max(0, savedInterest)),
         newMonthly: this.fmt(newMonthly),
-        monthlySaved: this.fmt(monthlySaved > 0 ? monthlySaved : 0),
-        irr: irr.toFixed(2) + '%',
         originalMonthly: this.fmt(originalMonthly),
+        monthlySaved: this.fmt(Math.max(0, monthlySaved)),
+        irr: irr.toFixed(2) + '%',
         newTotalInterest: this.fmt(newInterest)
       };
 
     } else {
-      // 缩短年限：月供不变，计算提前还清的期数
-      // 原月供不变，计算多少期可以还清
+      // 月供不变，缩短年限
       let newTerms = 0;
-      let tempRemaining = newRemainingPrincipal;
-      const fixedMonthly = originalMonthly;
-
-      while (tempRemaining > 0.01 && newTerms < totalMonths * 2) {
-        const interestPart = tempRemaining * r;
-        const principalPart = fixedMonthly - interestPart;
-        if (principalPart <= 0) break;
-        tempRemaining -= principalPart;
+      let rem = newPrincipal;
+      while (rem > 0.01 && newTerms < totalMonths * 2) {
+        const ip = rem * r;
+        const pp = originalMonthly - ip;
+        if (pp <= 0) break;
+        rem = Math.max(0, rem - pp);
         newTerms++;
+        newSchedule.push({ month: prepayMonthNum + newTerms, payment: originalMonthly });
       }
 
-      const newInterest = newTerms * fixedMonthly - newRemainingPrincipal;
+      const newInterest = originalMonthly * newTerms - newPrincipal;
       const savedInterest = originalInterest - paidInterest - newInterest;
-
-      // IRR
-      const newYears = newTerms / 12;
-      const irr = savedInterest > 0 && actualPrepayAmount > 0 ? (savedInterest / actualPrepayAmount / newYears) * 100 : 0;
+      const irr = savedInterest > 0 && newTerms > 0 ? (savedInterest / prepayWan / (newTerms / 12)) * 100 : 0;
+      const savedTerms = remainingTerms - newTerms;
 
       result = {
         strategy: 'reduceTerm',
-        savedInterest: this.fmt(savedInterest),
+        savedInterest: this.fmt(Math.max(0, savedInterest)),
+        originalMonthly: this.fmt(originalMonthly),
         newTerms: newTerms,
         originalTerms: totalMonths,
+        savedTerms: savedTerms,
         irr: irr.toFixed(2) + '%',
-        originalMonthly: this.fmt(originalMonthly),
         newTotalInterest: this.fmt(newInterest)
       };
     }
 
     // 还款前后对比表（前12期）
     const compareSchedule = [];
-    for (let i = 0; i < Math.min(12, totalMonths - paidMonths); i++) {
-      const month = paidMonths + i + 1;
-      const originalPayment = schedule[i] ? parseFloat(schedule[i].payment.replace(/,/g, '')) : 0;
-      const newPayment = newSchedule[i] ? newSchedule[i].payment : (strategy === 'reduceTerm' ? originalMonthly : 0);
+    const showCount = Math.min(12, newSchedule.length);
+    for (let i = 0; i < showCount; i++) {
+      const origIdx = prepayMonthNum + i; // schedule 是 0-indexed
+      const origPayment = origIdx < schedule.length
+        ? parseFloat(schedule[origIdx].payment.replace(/,/g, ''))
+        : originalMonthly;
       compareSchedule.push({
-        month,
-        original: this.fmt(originalPayment),
-        new: strategy === 'reduceTerm' ? this.fmt(originalMonthly) : this.fmt(newPayment)
+        month: prepayMonthNum + i + 1,
+        original: this.fmt(origPayment),
+        new: this.fmt(newSchedule[i].payment)
       });
     }
 
