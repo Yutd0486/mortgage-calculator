@@ -230,9 +230,42 @@ Page({
       }
     }
 
+    // 生成 combo 逐期明细（分别计算商贷+公积金，每期合并剩余本金）
+    const comboEiSchedule = [];
+    let comRem = cAmount > 0 && cRate > 0 ? cAmount * 10000 : 0;
+    let fundRem = fAmount > 0 && fRate > 0 ? fAmount * 10000 : 0;
+    const cr = cRate > 0 ? cRate / 100 / 12 : 0;
+    const fr = fRate > 0 ? fRate / 100 / 12 : 0;
+    const comMonthlyFixed = comMonthly;
+    const fundMonthlyFixed = typeof fundMonthly === 'number' ? fundMonthly : parseFloat(fundMonthly.replace(/,/g, '')) || 0;
+    for (let i = 1; i <= n; i++) {
+      let interestPart = 0, principalPart = 0;
+      if (comRem > 0 && cr > 0) {
+        const ci = comRem * cr;
+        const cp = comMonthlyFixed - ci;
+        interestPart += ci;
+        principalPart += cp;
+        comRem = Math.max(0, comRem - cp);
+      }
+      if (fundRem > 0 && fr > 0) {
+        const fi = fundRem * fr;
+        const fp = fundMonthlyFixed - fi;
+        interestPart += fi;
+        principalPart += fp;
+        fundRem = Math.max(0, fundRem - fp);
+      }
+      comboEiSchedule.push({
+        month: i,
+        payment: this.fmt(comMonthlyFixed + fundMonthlyFixed),
+        principal: this.fmt(principalPart),
+        interest: this.fmt(interestPart),
+        remaining: this.fmt(Math.max(0, comRem + fundRem))
+      });
+    }
+
     // 存储 combo 结果到 globalData（使用等额本息）
     app.globalData.calcResult = {
-      info: { loanAmount: cAmount + fAmount, years: years[selectedYearIndex], rate: cRate },
+      info: { loanAmount: cAmount + fAmount, years: years[selectedYearIndex], rate: cRate, isCombo: true, comboRates: { comAmount: cAmount, comRate: cRate, fundAmount: fAmount, fundRate: fRate } },
       summary: {
         eiMonthly: this.fmt(totalMonthly),
         eiInterest: this.fmt(totalInterest),
@@ -243,7 +276,7 @@ Page({
         commercial: { amount: cAmount, rate: cRate, monthly: comMonthly > 0 ? this.fmt(comMonthly) : '0', interest: comTotalInterest > 0 ? this.fmt(comTotalInterest) : '0' },
         fund: { amount: fAmount, rate: fRate, monthly: fundMonthly, interest: fundTotalInterest > 0 ? this.fmt(fundTotalInterest) : '0' }
       },
-      eiSchedule: [] // 简化，combo 不存储详细 schedule
+      eiSchedule: comboEiSchedule
     };
 
     this.setData({

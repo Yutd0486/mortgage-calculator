@@ -15,6 +15,7 @@ Page({
     const calcResult = app.globalData.calcResult;
     if (!calcResult || !calcResult.eiSchedule || calcResult.eiSchedule.length === 0) {
       wx.showToast({ title: '请先在计算器页完成计算', icon: 'none' });
+      wx.switchTab({ url: '/pages/index/index' });
       return;
     }
     this.setData({ calcResult });
@@ -49,18 +50,14 @@ Page({
     const info = calcResult.info;
     const P = info.loanAmount * 10000;
     const totalMonths = info.years * 12;
-    const r = info.rate / 100 / 12;
-
     const schedule = calcResult.eiSchedule;
 
     if (prepayMonthNum >= totalMonths) {
       wx.showToast({ title: '期数超出还款总期数', icon: 'none' }); return;
     }
-
-    // 原始月供
-    const pow0 = Math.pow(1 + r, totalMonths);
-    const originalMonthly = (P * r * pow0) / (pow0 - 1);
-    const originalInterest = originalMonthly * totalMonths - P;
+    if (prepayMonthNum > schedule.length) {
+      wx.showToast({ title: '期数超出已计算的还款期数', icon: 'none' }); return;
+    }
 
     // 第 N 期末的剩余本金（直接从 schedule 取）
     const nthItem = schedule[prepayMonthNum - 1];
@@ -73,6 +70,23 @@ Page({
 
     const newPrincipal = remainingAfterN - prepayWan;
     const remainingTerms = totalMonths - prepayMonthNum;
+
+    // 计算有效月利率（combo 用加权平均）
+    let r;
+    if (info.isCombo && info.comboRates) {
+      const { comAmount, comRate, fundAmount: fAmt, fundRate: fRate } = info.comboRates;
+      const totalP = (comAmount + fAmt) * 10000;
+      // 加权平均月利率
+      r = ((comAmount * 10000 * (comRate / 100 / 12)) + (fAmt * 10000 * (fRate / 100 / 12))) / totalP;
+    } else {
+      r = info.rate / 100 / 12;
+    }
+
+    // 原始月供（从 schedule 第1期取）
+    const originalMonthly = parseFloat(schedule[0].payment.replace(/,/g, ''));
+
+    // 原始总利息 = 所有期利息之和
+    const originalInterest = schedule.reduce((s, item) => s + parseFloat(item.interest.replace(/,/g, '')), 0);
 
     // 已付利息
     const paidInterest = schedule.slice(0, prepayMonthNum).reduce((s, item) => {
@@ -91,7 +105,6 @@ Page({
       const irr = savedInterest > 0 ? (savedInterest / prepayWan / (remainingTerms / 12)) * 100 : 0;
       const monthlySaved = originalMonthly - newMonthly;
 
-      // 生成新 schedule 供对比表用
       let rem = newPrincipal;
       for (let i = 0; i < remainingTerms; i++) {
         const ip = rem * r;
@@ -144,7 +157,7 @@ Page({
     const compareSchedule = [];
     const showCount = Math.min(12, newSchedule.length);
     for (let i = 0; i < showCount; i++) {
-      const origIdx = prepayMonthNum + i; // schedule 是 0-indexed
+      const origIdx = prepayMonthNum + i;
       const origPayment = origIdx < schedule.length
         ? parseFloat(schedule[origIdx].payment.replace(/,/g, ''))
         : originalMonthly;
