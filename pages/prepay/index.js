@@ -8,17 +8,43 @@ Page({
     prepayAmount: '',
     strategy: 'reducePayment', // 'reducePayment' | 'reduceTerm'
     result: null,
-    compareSchedule: []
+    compareSchedule: [],
+    noData: false  // 是否显示"请先计算"提示
   },
 
   onShow() {
     const calcResult = app.globalData.calcResult;
     if (!calcResult || !calcResult.eiSchedule || calcResult.eiSchedule.length === 0) {
-      wx.showToast({ title: '请先在计算器页完成计算', icon: 'none' });
-      setTimeout(() => wx.switchTab({ url: '/pages/index/index' }), 1500);
+      // 没有计算结果：显示提示，不跳转，不重置输入
+      this.setData({ noData: true, calcResult: null });
       return;
     }
-    this.setData({ calcResult, result: null, compareSchedule: [], prepayMonth: '', prepayAmount: '' });
+
+    // 有计算结果：检查是否是新的计算结果（贷款信息变了才重置输入）
+    const prev = this.data.calcResult;
+    const infoChanged = !prev ||
+      prev.info.loanAmount !== calcResult.info.loanAmount ||
+      prev.info.years !== calcResult.info.years ||
+      prev.info.rate !== calcResult.info.rate;
+
+    if (infoChanged) {
+      // 贷款信息变了，重置输入和结果
+      this.setData({
+        noData: false,
+        calcResult,
+        result: null,
+        compareSchedule: [],
+        prepayMonth: '',
+        prepayAmount: ''
+      });
+    } else {
+      // 贷款信息没变，只更新 calcResult，保留用户输入
+      this.setData({ noData: false, calcResult });
+    }
+  },
+
+  goCalc() {
+    wx.switchTab({ url: '/pages/index/index' });
   },
 
   onPrepayMonthInput(e) { this.setData({ prepayMonth: e.detail.value, result: null }); },
@@ -48,7 +74,6 @@ Page({
     }
 
     const info = calcResult.info;
-    const P = info.loanAmount * 10000;
     const totalMonths = info.years * 12;
     const schedule = calcResult.eiSchedule;
 
@@ -76,7 +101,6 @@ Page({
     if (info.isCombo && info.comboRates) {
       const { comAmount, comRate, fundAmount: fAmt, fundRate: fRate } = info.comboRates;
       const totalP = (comAmount + fAmt) * 10000;
-      // 加权平均月利率
       r = ((comAmount * 10000 * (comRate / 100 / 12)) + (fAmt * 10000 * (fRate / 100 / 12))) / totalP;
     } else {
       r = info.rate / 100 / 12;
@@ -88,7 +112,7 @@ Page({
     // 原始总利息 = 所有期利息之和
     const originalInterest = schedule.reduce((s, item) => s + parseFloat(item.interest.replace(/,/g, '')), 0);
 
-    // 已付利息
+    // 已付利息（前 N 期）
     const paidInterest = schedule.slice(0, prepayMonthNum).reduce((s, item) => {
       return s + parseFloat(item.interest.replace(/,/g, ''));
     }, 0);
@@ -120,7 +144,7 @@ Page({
         originalMonthly: this.fmt(originalMonthly),
         monthlySaved: this.fmt(Math.max(0, monthlySaved)),
         irr: irr.toFixed(2) + '%',
-        newTotalInterest: this.fmt(newInterest)
+        newTotalInterest: this.fmt(Math.max(0, newInterest))
       };
 
     } else {
@@ -149,7 +173,7 @@ Page({
         originalTerms: totalMonths,
         savedTerms: savedTerms,
         irr: irr.toFixed(2) + '%',
-        newTotalInterest: this.fmt(newInterest)
+        newTotalInterest: this.fmt(Math.max(0, newInterest))
       };
     }
 

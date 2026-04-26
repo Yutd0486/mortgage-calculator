@@ -6,8 +6,16 @@
     <view class="header-sub">智能规划节省利息</view>
   </view>
 
+  <!-- No Data Prompt -->
+  <view class="no-data-card" wx:if="{{noData}}">
+    <text class="no-data-icon">📊</text>
+    <view class="no-data-text">请先在计算器页完成贷款计算</view>
+    <view class="no-data-sub">计算完成后再来这里模拟提前还款</view>
+    <button class="go-calc-btn" bindtap="goCalc">去计算器</button>
+  </view>
+
   <!-- Info Card -->
-  <view class="info-card" wx:if="{{calcResult}}">
+  <view class="info-card" wx:if="{{calcResult && !noData}}">
     <view class="info-row">
       <text class="info-label">原贷款总额</text>
       <text class="info-val">{{calcResult.info.loanAmount}} 万元</text>
@@ -23,7 +31,7 @@
   </view>
 
   <!-- Input Form -->
-  <view class="form-card">
+  <view class="form-card" wx:if="{{calcResult && !noData}}">
     <view class="form-item">
       <view class="form-label">
         <text class="label-icon">📅</text>
@@ -33,7 +41,7 @@
         <input class="form-input" type="number" placeholder="请输入期数" bindinput="onPrepayMonthInput" value="{{prepayMonth}}" />
         <view class="input-unit">期后</view>
       </view>
-      <view class="form-hint">例如：第12期表示贷款后第12个月</view>
+      <view class="form-hint">例如：第12期表示贷款后第12个月末</view>
     </view>
 
     <view class="form-item">
