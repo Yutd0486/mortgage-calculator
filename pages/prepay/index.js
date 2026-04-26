@@ -188,7 +188,7 @@ Page({
       compareSchedule.push({
         month: prepayMonthNum + i + 1,
         original: this.fmt(origPayment),
-        new: this.fmt(newSchedule[i].payment)
+        newPayment: this.fmt(newSchedule[i].payment)
       });
     }
 

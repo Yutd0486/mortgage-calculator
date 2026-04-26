@@ -143,7 +143,7 @@
       <view class="table-row {{index%2==0?'row-even':''}}" wx:for="{{compareSchedule}}" wx:key="month">
         <text class="col-month">第{{item.month}}期</text>
         <text class="col-val">{{item.original}}</text>
-        <text class="col-val highlight">{{item.new}}</text>
+        <text class="col-val highlight">{{item.newPayment}}</text>
       </view>
     </view>
   </view>
