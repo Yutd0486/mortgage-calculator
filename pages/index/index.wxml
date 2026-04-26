@@ -280,9 +280,9 @@
       </view>
     </block>
 
-    <!-- 提前还款入口（仅普通模式显示） -->
-    <view class="prepay-entry" wx:if="{{mode === 'normal' && showResult}}">
-      <navigator url="/pages/prepay/index" class="prepay-btn">
+    <!-- 提前还款入口 -->
+    <view class="prepay-entry" wx:if="{{showResult}}">
+      <navigator url="/pages/prepay/index" open-type="switchTab" class="prepay-btn">
         <text class="prepay-btn-text">提前还款计算 →</text>
       </navigator>
     </view>
