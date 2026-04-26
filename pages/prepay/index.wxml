@@ -62,7 +62,7 @@
         <view class="strategy-option {{strategy === 'reducePayment' ? 'active' : ''}}" bindtap="onStrategyChange" data-strategy="reducePayment">
           <view class="strategy-radio {{strategy === 'reducePayment' ? 'checked' : ''}}"></view>
           <view class="strategy-content">
-            <text class="strategy-title">缩短月供</text>
+            <text class="strategy-title">降低月供</text>
             <text class="strategy-desc">年限不变，月供更低</text>
           </view>
         </view>

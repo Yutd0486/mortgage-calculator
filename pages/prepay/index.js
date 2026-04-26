@@ -15,10 +15,10 @@ Page({
     const calcResult = app.globalData.calcResult;
     if (!calcResult || !calcResult.eiSchedule || calcResult.eiSchedule.length === 0) {
       wx.showToast({ title: '请先在计算器页完成计算', icon: 'none' });
-      wx.switchTab({ url: '/pages/index/index' });
+      setTimeout(() => wx.switchTab({ url: '/pages/index/index' }), 1500);
       return;
     }
-    this.setData({ calcResult });
+    this.setData({ calcResult, result: null, compareSchedule: [], prepayMonth: '', prepayAmount: '' });
   },
 
   onPrepayMonthInput(e) { this.setData({ prepayMonth: e.detail.value, result: null }); },

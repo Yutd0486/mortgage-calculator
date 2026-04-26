@@ -21,6 +21,12 @@
         "text": "还款计划",
         "iconPath": "assets/icons/plan_gray.png",
         "selectedIconPath": "assets/icons/plan_blue.png"
+      },
+      {
+        "pagePath": "pages/prepay/index",
+        "text": "提前还款",
+        "iconPath": "assets/icons/prepay_gray.png",
+        "selectedIconPath": "assets/icons/prepay_blue.png"
       }
     ]
   },

@@ -210,12 +210,12 @@ Page({
     if (fAmount > 0 && fRate > 0) {
       const fP = fAmount * 10000;
       const fr = fRate / 100 / 12;
-      fundMonthly = this.fmt(this.calcEIMonthly(fP, fr, n));
-      fundTotalInterest = this.calcEIMonthly(fP, fr, n) * n - fP;
+      fundMonthly = this.calcEIMonthly(fP, fr, n);
+      fundTotalInterest = fundMonthly * n - fP;
     }
 
     // 合计月供
-    const totalMonthly = (comMonthly || 0) + (typeof fundMonthly === 'number' ? fundMonthly : parseFloat(fundMonthly.replace(/,/g, '')) || 0);
+    const totalMonthly = (comMonthly || 0) + (fundMonthly || 0);
     const totalInterest = comTotalInterest + fundTotalInterest;
     const totalPrincipal = (cAmount + fAmount) * 10000;
 
@@ -237,7 +237,7 @@ Page({
     const cr = cRate > 0 ? cRate / 100 / 12 : 0;
     const fr = fRate > 0 ? fRate / 100 / 12 : 0;
     const comMonthlyFixed = comMonthly;
-    const fundMonthlyFixed = typeof fundMonthly === 'number' ? fundMonthly : parseFloat(fundMonthly.replace(/,/g, '')) || 0;
+    const fundMonthlyFixed = fundMonthly;
     for (let i = 1; i <= n; i++) {
       let interestPart = 0, principalPart = 0;
       if (comRem > 0 && cr > 0) {
@@ -274,7 +274,7 @@ Page({
       isCombo: true,
       combo: {
         commercial: { amount: cAmount, rate: cRate, monthly: comMonthly > 0 ? this.fmt(comMonthly) : '0', interest: comTotalInterest > 0 ? this.fmt(comTotalInterest) : '0' },
-        fund: { amount: fAmount, rate: fRate, monthly: fundMonthly, interest: fundTotalInterest > 0 ? this.fmt(fundTotalInterest) : '0' }
+        fund: { amount: fAmount, rate: fRate, monthly: fundMonthly > 0 ? this.fmt(fundMonthly) : '0', interest: fundTotalInterest > 0 ? this.fmt(fundTotalInterest) : '0' }
       },
       eiSchedule: comboEiSchedule
     };
@@ -293,7 +293,7 @@ Page({
       comboResult: {
         totalMonthly: this.fmt(totalMonthly),
         commercial: { monthly: comMonthly > 0 ? this.fmt(comMonthly) : '0', interest: comTotalInterest > 0 ? this.fmt(comTotalInterest) : '0' },
-        fund: { monthly: fundMonthly, interest: fundTotalInterest > 0 ? this.fmt(fundTotalInterest) : '0' },
+        fund: { monthly: fundMonthly > 0 ? this.fmt(fundMonthly) : '0', interest: fundTotalInterest > 0 ? this.fmt(fundTotalInterest) : '0' },
         compareMsg,
         savedMonthly: savedMonthly > 0 ? this.fmt(savedMonthly) : ''
       }
