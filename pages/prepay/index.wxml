@@ -1,7 +1,7 @@
 <view class="container">
   <!-- Header -->
   <view class="header">
-    <view class="header-icon">💳</view>
+    <view class="header-icon">💰</view>
     <view class="header-title">提前还款计算</view>
     <view class="header-sub">看看提前还款能省多少利息</view>
   </view>
