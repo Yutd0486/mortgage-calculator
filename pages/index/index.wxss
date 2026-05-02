@@ -131,6 +131,12 @@ page {
 .btn-text {
   line-height: 1;
 }
+.btn-icon {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1;
+  margin-right: 4rpx;
+}
 
 /* ===== Result Card ===== */
 .result-card {
@@ -405,14 +411,15 @@ page {
   align-items: center;
   justify-content: center;
   height: 80rpx;
-  background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+  background: #fff;
   border-radius: 40rpx;
+  border: 2rpx solid #1677ff;
   text-decoration: none;
 }
 .prepay-btn-text {
   font-size: 28rpx;
   font-weight: 600;
-  color: #fff;
+  color: #1677ff;
 }
 
 /* ===== Emoji Icon Replacements ===== */

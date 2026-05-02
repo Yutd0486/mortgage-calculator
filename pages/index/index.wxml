@@ -171,7 +171,8 @@
     </block>
 
     <button class="calc-btn" bindtap="calculate">
-      <text class="btn-text">🧮 立即计算</text>
+      <text class="btn-icon">▶</text>
+      <text class="btn-text">立即计算</text>
     </button>
   </view>
 
